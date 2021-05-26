@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 
 import django_heroku
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -121,4 +123,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Heroku
 django_heroku.settings(locals())
 
-CHATWOOT_URL = os.environ.get("CHATWOOT_URL", "http://localhost:3000")
+# Sentry
+sentry_sdk.init(
+    send_default_pii=True,
+    traces_sample_rate=1.0,
+    dsn=os.environ.get("SENTRY_DSN"),
+    integrations=[DjangoIntegration()],
+)
+
+CHATWOOT_URL = os.environ.get("CHATWOOT_URL")
